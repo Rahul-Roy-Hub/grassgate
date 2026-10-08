@@ -6,7 +6,7 @@ import { verifyCode, newSecret } from './otp.js';
 const DEFAULTS = {
   sites: ['x.com', 'twitter.com', 'reddit.com', 'instagram.com', 'tiktok.com', 'facebook.com', 'youtube.com'],
   unlockMinutes: 30,
-  appUrl: 'http://localhost:8080/',
+  appUrl: 'https://grassgate.vercel.app/',
   secret: '',
   unlockUntil: 0,
   usedCodes: [],

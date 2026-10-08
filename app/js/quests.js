@@ -3,7 +3,11 @@
 
 import { distanceM, bearingDeg, compass, formatDistance } from './geo.js';
 
-const OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
+const OVERPASS_URLS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.private.coffee/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+];
 const MIN_DISTANCE_M = 120; // make people actually walk somewhere
 const PER_TYPE_LIMIT = 40;
 
@@ -109,32 +113,40 @@ function buildQuery(pos, radius) {
   return `[out:json][timeout:20];${sets.join('')}`;
 }
 
-async function fetchFeatures(pos, radius) {
-  // Round to ~1 km so a cached map is reused around home, and works offline next time.
-  const cacheKey = `gg:osm:${pos.lat.toFixed(2)},${pos.lon.toFixed(2)},${radius}`;
+async function queryOverpass(url, data) {
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 25000);
+  const timer = setTimeout(() => ctrl.abort(), 15000);
   try {
-    const res = await fetch(OVERPASS_URL, {
-      method: 'POST',
-      body: new URLSearchParams({ data: buildQuery(pos, radius) }),
-      signal: ctrl.signal,
-    });
-    if (!res.ok) throw new Error(`Overpass returned ${res.status}`);
-    const json = await res.json();
-    const features = json.elements
-      .map((el) => ({ lat: el.lat ?? el.center?.lat, lon: el.lon ?? el.center?.lon, tags: el.tags || {} }))
-      .filter((f) => f.lat != null && f.lon != null);
-    try { localStorage.setItem(cacheKey, JSON.stringify(features)); } catch { /* storage full or blocked */ }
-    return features;
-  } catch (err) {
-    let cached = null;
-    try { cached = JSON.parse(localStorage.getItem(cacheKey)); } catch { /* ignore */ }
-    if (cached) return cached;
-    throw new Error('Could not load the map around you.', { cause: err });
+    const res = await fetch(url, { method: 'POST', body: new URLSearchParams({ data }), signal: ctrl.signal });
+    if (!res.ok) throw new Error(`${new URL(url).host} returned ${res.status}`);
+    return await res.json();
   } finally {
     clearTimeout(timer);
   }
+}
+
+async function fetchFeatures(pos, radius) {
+  // Round to ~1 km so a cached map is reused around home, and works offline next time.
+  const cacheKey = `gg:osm:${pos.lat.toFixed(2)},${pos.lon.toFixed(2)},${radius}`;
+  const data = buildQuery(pos, radius);
+  const errors = [];
+  // Public Overpass servers are volunteer-run and sometimes overloaded or blocking, so try each in turn.
+  for (const url of OVERPASS_URLS) {
+    try {
+      const json = await queryOverpass(url, data);
+      const features = json.elements
+        .map((el) => ({ lat: el.lat ?? el.center?.lat, lon: el.lon ?? el.center?.lon, tags: el.tags || {} }))
+        .filter((f) => f.lat != null && f.lon != null);
+      try { localStorage.setItem(cacheKey, JSON.stringify(features)); } catch { /* storage full or blocked */ }
+      return features;
+    } catch (err) {
+      errors.push(err);
+    }
+  }
+  let cached = null;
+  try { cached = JSON.parse(localStorage.getItem(cacheKey)); } catch { /* ignore */ }
+  if (cached) return cached;
+  throw new Error('Could not load the map around you.', { cause: new AggregateError(errors) });
 }
 
 export async function buildQuests(pos, radius, count = 3) {

@@ -2,6 +2,8 @@
 
 **Your feeds stay locked until you go outside.**
 
+**▶ Try it: [grassgate.vercel.app](https://grassgate.vercel.app/)** (open it on your phone)
+
 A browser extension blocks your doomscroll sites. To get back in, open Grass Gate on your phone. It picks a quest from real places near you ("Elk Glen Lake is 430 m southeast, go photograph the water"), then walks you there. An open-weight vision model on your phone checks the photo, and you get a one-time 6-digit code that unlocks your sites for 30 minutes.
 
 The screen is only the lock. The whole experience happens outside.
@@ -63,11 +65,11 @@ Built for the Hacktoberfest Open-Source AI Challenge, Week 1: *Touch Grass*.
 npm start
 ```
 
-Then open http://localhost:8080. Camera and GPS need **HTTPS or localhost**, so to use it on your phone, deploy the `app/` folder to any static host (Vercel, Netlify, GitHub Pages). It's plain HTML and JS with no build step.
+Then open http://localhost:8080. Camera and GPS need **HTTPS or localhost**, so to use it on your phone, open the live version at https://grassgate.vercel.app/ or deploy your own copy (`npm run build` → `dist/`, which `vercel.json` already sets up).
 
 **Install the extension**
 1. Open `chrome://extensions`, turn on **Developer mode**, click **Load unpacked**, and pick the `extension/` folder.
-2. The options page opens. Set the **app URL** to where you deployed the PWA, then open the pairing link on your phone (or type the pairing code into the app's ⚙︎ settings).
+2. The options page opens. The **app URL** already points to https://grassgate.vercel.app/ (change it only if you deploy your own copy). Open the pairing link on your phone, or type the pairing code into the app's ⚙︎ settings.
 3. Visit x.com. You're locked out. Go outside.
 
 **Offline:** in the app's ⚙︎ settings, tap **Download models now**. After that, the photo check works with no signal. The last map around you is cached too, and "anywhere" quests (sky, leaf, flower, grass) need no map at all.
