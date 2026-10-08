@@ -8,7 +8,11 @@
     "start": "npx --yes http-server@14.1.1 app -p 8080 -c-1",
     "test": "node --test tests/*.test.js",
     "build": "npm test && node scripts/build.mjs",
-    "preview": "npx --yes http-server@14.1.1 dist -p 4173 -c-1"
+    "preview": "npx --yes http-server@14.1.1 dist -p 4173 -c-1",
+    "postinstall": "node scripts/vendor.mjs"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
 }

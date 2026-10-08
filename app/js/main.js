@@ -8,6 +8,11 @@ import { addEntry, listEntries, deleteEntry, clearJournal } from './journal.js';
 import { startCompass, stopCompass, compassAvailable, needsPermission } from './compass.js';
 import { sunTimes, dayPhase, sceneSVG, seasonOf, greeting, daylightLine } from './scenery.js';
 import { toast, buzz, chime, primeAudio, leafBurst } from './fx.js';
+import { inject as injectAnalytics } from '../vendor/vercel-analytics.mjs';
+
+// Vercel Web Analytics: cookieless page views only. No location, photos or quest data are sent.
+const isLocal = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+injectAnalytics({ mode: isLocal ? 'development' : 'production' });
 
 const $ = (id) => document.getElementById(id);
 

@@ -20,6 +20,7 @@ const SHELL = [
   'js/compass.js',
   'js/scenery.js',
   'js/fx.js',
+  'vendor/vercel-analytics.mjs',
 ];
 
 self.addEventListener('install', (event) => {
@@ -55,6 +56,7 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET' || request.headers.has('range')) return;
   const url = new URL(request.url);
+  if (url.pathname.startsWith('/_vercel/')) return; // analytics must hit the network
   if (url.origin === self.location.origin) {
     event.respondWith(staleWhileRevalidate(request));
   } else if (url.hostname === 'cdn.jsdelivr.net') {
