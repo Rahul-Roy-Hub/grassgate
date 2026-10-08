@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Go touch grass</title>
+  <link rel="stylesheet" href="page.css">
+</head>
+<body>
+  <main>
+    <div id="scene" class="scene" aria-hidden="true"></div>
+    <p id="site" class="eyebrow"></p>
+    <h1>Go touch grass.</h1>
+    <p id="line" class="muted"></p>
+    <p id="attempts" class="pill" hidden></p>
+
+    <div class="card">
+      <ol class="steps">
+        <li><span>Open Grass Gate on your phone: <a id="app-link" class="mono small" target="_blank" rel="noopener"></a></span></li>
+        <li>Pick a quest and walk to a real place nearby.</li>
+        <li>Photograph it. An open-weight model on your phone checks it.</li>
+      </ol>
+      <div class="code-row">
+        <input id="code" class="code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="······" aria-label="6-digit unlock code">
+        <button id="unlock" class="primary" type="button">Unlock</button>
+      </div>
+      <p id="msg" class="small" aria-live="polite"></p>
+    </div>
+
+    <p id="pair-note" class="small muted" hidden>Your phone isn’t paired yet. <a href="options.html">Pair it on the options page</a>.</p>
+  </main>
+  <script src="blocked.js" type="module"></script>
+</body>
+</html>

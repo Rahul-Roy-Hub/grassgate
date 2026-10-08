@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f1e6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#10150f" media="(prefers-color-scheme: dark)">
+  <meta name="description" content="Your feeds stay locked until you go outside and finish a quest. Runs on open-weight AI, on your phone.">
+  <title>Grass Gate</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <span class="logo"><img src="icon.svg" alt="" width="26" height="26"> Grass Gate</span>
+    <span class="top-right">
+      <span id="demo-badge" class="demo-badge" hidden>Demo</span>
+      <button id="top-status" class="status-chip" type="button"></button>
+    </span>
+  </header>
+
+  <div id="model-bar" class="model-bar" role="status" hidden>
+    <span id="model-text"></span>
+    <progress id="model-progress" max="100"></progress>
+  </div>
+
+  <main>
+    <!-- Onboarding -->
+    <section id="screen-onboarding" class="screen" aria-labelledby="ob-title">
+      <div class="ob-slide">
+        <div id="ob-art" class="ob-art" aria-hidden="true"></div>
+        <h1 id="ob-title" tabindex="-1"></h1>
+        <p id="ob-text" class="lead muted"></p>
+        <div id="ob-pair" class="ob-pair" hidden>
+          <label class="field">
+            <span>Pairing code</span>
+            <input id="ob-secret" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD-EFGH-JKMN-PQRS">
+          </label>
+          <p id="ob-pair-status" class="small muted"></p>
+        </div>
+      </div>
+      <div id="ob-dots" class="ob-dots" aria-hidden="true"></div>
+      <div class="row">
+        <button id="ob-back" class="ghost" type="button">Back</button>
+        <button id="ob-next" class="primary" type="button">Next</button>
+      </div>
+      <button id="ob-skip" class="link" type="button">Skip intro</button>
+    </section>
+
+    <!-- Today -->
+    <section id="screen-today" class="screen">
+      <div class="hero">
+        <div id="hero-art" class="hero-art" aria-hidden="true"></div>
+        <div class="hero-body">
+          <h1 id="hero-title" tabindex="-1"></h1>
+          <p id="hero-sub" class="muted small"></p>
+        </div>
+      </div>
+
+      <div id="lock-card" class="lock-card">
+        <span id="lock-icon" class="lock-icon" aria-hidden="true">🔒</span>
+        <div>
+          <strong id="lock-title"></strong>
+          <p id="lock-text" class="muted small"></p>
+        </div>
+        <button id="btn-pair-now" class="ghost small-btn" type="button">Pair</button>
+      </div>
+
+      <button id="btn-start" class="primary big" type="button">Find me a quest</button>
+
+      <div class="stats">
+        <div class="stat streak"><span id="stat-streak" class="stat-num">0</span><span class="stat-label">day streak</span></div>
+        <div class="stat"><span id="stat-quests" class="stat-num">0</span><span class="stat-label">quests</span></div>
+        <div class="stat"><span id="stat-km" class="stat-num">0</span><span class="stat-label">km walked</span></div>
+        <div class="stat"><span id="stat-time" class="stat-num">0</span><span id="stat-time-label" class="stat-label">min outside</span></div>
+      </div>
+
+      <section class="panel" aria-labelledby="stamps-title">
+        <div class="panel-head">
+          <h2 id="stamps-title" class="h3">Field stamps</h2>
+          <span id="stamps-count" class="muted small"></span>
+        </div>
+        <ul id="stamps" class="stamps"></ul>
+      </section>
+
+      <button id="btn-install" class="ghost" type="button" hidden>Add Grass Gate to your home screen</button>
+    </section>
+
+    <!-- Quest picker -->
+    <section id="screen-quests" class="screen">
+      <div class="screen-head">
+        <button id="btn-quests-back" class="back" type="button" aria-label="Back">←</button>
+        <h1 tabindex="-1">Pick a quest</h1>
+      </div>
+      <p id="quests-status" class="muted" aria-live="polite"></p>
+      <ul id="quest-list" class="cards"></ul>
+      <button id="btn-reroll" class="ghost" type="button">↻ Show me different quests</button>
+    </section>
+
+    <!-- Walking -->
+    <section id="screen-walk" class="screen">
+      <div class="screen-head">
+        <button id="btn-walk-back" class="back" type="button" aria-label="Back to quests">←</button>
+        <p id="walk-type" class="eyebrow"></p>
+      </div>
+      <h1 id="walk-title" tabindex="-1"></h1>
+      <p id="walk-text" class="lead"></p>
+
+      <div class="nav-card">
+        <div id="dial" class="dial">
+          <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+            <circle class="ring-bg" cx="60" cy="60" r="54"/>
+            <circle id="ring-fg" class="ring-fg" cx="60" cy="60" r="54"/>
+          </svg>
+          <div id="dial-face" class="dial-face" aria-hidden="true"><span class="n">N</span></div>
+          <svg id="walk-arrow" class="arrow" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 33 35 20 27 7 35Z"/></svg>
+          <div id="dial-emoji" class="dial-emoji" aria-hidden="true" hidden></div>
+        </div>
+        <div class="nav-readout" aria-live="polite">
+          <div id="walk-dist" class="dist"></div>
+          <div id="walk-eta"></div>
+          <div id="walk-dir" class="muted small"></div>
+        </div>
+      </div>
+
+      <div class="row wrap">
+        <button id="btn-compass" class="ghost" type="button" hidden>🧭 Point with my phone</button>
+        <a id="walk-map" class="button" target="_blank" rel="noopener" hidden>🗺️ Walking directions</a>
+      </div>
+      <p id="walk-tip" class="tip"></p>
+      <button id="btn-camera" class="primary big" type="button" disabled></button>
+    </section>
+
+    <!-- Camera -->
+    <section id="screen-camera" class="screen">
+      <div id="viewfinder" class="viewfinder" data-state="starting">
+        <video id="video" playsinline muted></video>
+        <canvas id="freeze"></canvas>
+        <div class="brackets" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div class="scanline" aria-hidden="true"></div>
+        <p id="cam-target" class="cam-chip"></p>
+        <p id="cam-status" class="cam-status" aria-live="polite"></p>
+      </div>
+      <div class="shutter-row">
+        <button id="btn-cam-back" class="ghost round" type="button" aria-label="Back">←</button>
+        <button id="btn-shoot" class="shutter" type="button" aria-label="Take the photo and check it" disabled></button>
+        <button id="btn-cam-retry" class="ghost round" type="button" aria-label="Restart the camera">↻</button>
+      </div>
+      <p class="muted small center">Checked on this phone. Nothing is uploaded.</p>
+    </section>
+
+    <!-- Result -->
+    <section id="screen-result" class="screen">
+      <div id="result-pass" class="stack" hidden>
+        <p class="eyebrow">Quest complete</p>
+        <h1 tabindex="-1">You touched grass. 🌿</h1>
+        <div id="code-card" class="code-card">
+          <p class="small muted">Type this on the blocked page</p>
+          <div id="code" class="code" role="img"></div>
+          <div class="meter"><span id="code-meter"></span></div>
+          <p id="code-timer" class="small muted"></p>
+        </div>
+        <div id="unpaired-note" class="callout" hidden>
+          <p><strong>Nice. Now make it count.</strong> Pair the browser extension and every quest gives you a code that unlocks your sites.</p>
+          <button id="btn-result-pair" class="ghost small-btn" type="button">Pair now</button>
+        </div>
+        <ul id="result-chips" class="chips"></ul>
+        <figure class="result-photo">
+          <img id="result-img" alt="Your quest photo">
+          <figcaption id="result-caption" class="muted small"></figcaption>
+        </figure>
+      </div>
+
+      <div id="result-fail" class="stack" hidden>
+        <p class="eyebrow warn">Not quite</p>
+        <h1 tabindex="-1">Almost.</h1>
+        <p id="fail-reason" class="lead"></p>
+        <ul id="fail-tips" class="tips"></ul>
+      </div>
+
+      <details class="panel">
+        <summary>What the on-device model saw</summary>
+        <div id="result-scores" class="bars"></div>
+      </details>
+      <div class="row">
+        <button id="btn-result-alt" class="ghost" type="button"></button>
+        <button id="btn-result-next" class="primary" type="button"></button>
+      </div>
+    </section>
+
+    <!-- Journal -->
+    <section id="screen-journal" class="screen">
+      <h1 tabindex="-1">Field journal</h1>
+      <p id="journal-note" class="muted"></p>
+      <ul id="journal-grid" class="journal"></ul>
+      <div id="journal-empty" class="empty" hidden>
+        <div class="empty-art" aria-hidden="true">📓</div>
+        <p><strong>Nothing here yet.</strong></p>
+        <p class="muted">Every quest you finish lands here with its photo. Your journal stays on this phone.</p>
+        <button id="btn-journal-start" class="primary" type="button">Find a quest</button>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section id="screen-settings" class="screen">
+      <h1 tabindex="-1">Settings</h1>
+
+      <section class="panel" aria-labelledby="set-pair-h">
+        <h2 id="set-pair-h" class="h3">Pairing</h2>
+        <label class="field">
+          <span>Pairing code from the browser extension</span>
+          <input id="set-secret" class="mono" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD-EFGH-JKMN-PQRS">
+        </label>
+        <p id="set-secret-status" class="muted small"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="set-quest-h">
+        <h2 id="set-quest-h" class="h3">Quests</h2>
+        <label class="field">
+          <span>How far will you walk?</span>
+          <select id="set-radius">
+            <option value="500">Up to 500 m (a short loop)</option>
+            <option value="800">Up to 800 m (about 10 min)</option>
+            <option value="1200">Up to 1.2 km (about 15 min)</option>
+            <option value="2000">Up to 2 km (a proper walk)</option>
+          </select>
+        </label>
+        <label class="check">
+          <input id="set-demo" type="checkbox">
+          <span>Demo mode<small>Skips the distance check so you can record a demo at your desk.</small></span>
+        </label>
+      </section>
+
+      <section class="panel" aria-labelledby="set-ai-h">
+        <h2 id="set-ai-h" class="h3">On-device AI</h2>
+        <p class="small muted">Every photo is checked by <strong>CLIP ViT-B/32</strong> (open weights, about 155 MB, downloaded once) running in this browser.</p>
+        <label class="check">
+          <input id="set-llm" type="checkbox">
+          <span>Let a local LLM write the quests<small id="set-llm-note"></small></span>
+        </label>
+        <label class="field">
+          <span>Open-weight model</span>
+          <select id="set-llm-model"></select>
+        </label>
+        <button id="btn-preload" class="ghost" type="button">Download models for offline use</button>
+        <p id="preload-status" class="muted small" aria-live="polite"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="set-data-h">
+        <h2 id="set-data-h" class="h3">Your data</h2>
+        <p class="small muted">Stats, journal photos and your pairing code live only in this browser. There is no account and no server.</p>
+        <div class="row wrap">
+          <button id="btn-show-intro" class="ghost small-btn" type="button">Show the intro</button>
+          <button id="btn-reset-stats" class="ghost small-btn" type="button">Reset stats</button>
+          <button id="btn-clear-journal" class="ghost small-btn danger" type="button">Clear journal</button>
+        </div>
+      </section>
+
+      <p class="muted small center">Grass Gate 0.2 · CLIP, WebLLM and OpenStreetMap</p>
+    </section>
+  </main>
+
+  <nav class="tabbar" aria-label="Main">
+    <button class="tab" data-tab="today" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></svg>
+      Today
+    </button>
+    <button class="tab" data-tab="journal" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/><path d="M9 7.5h6M9 11h4"/></svg>
+      Journal
+    </button>
+    <button class="tab" data-tab="settings" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+      Settings
+    </button>
+  </nav>
+
+  <dialog id="entry-dialog" class="sheet" aria-labelledby="entry-title">
+    <img id="entry-img" alt="">
+    <div class="sheet-body">
+      <p id="entry-type" class="eyebrow"></p>
+      <h2 id="entry-title"></h2>
+      <p id="entry-meta" class="muted small"></p>
+      <p id="entry-text"></p>
+      <div class="row">
+        <button id="entry-delete" class="ghost danger" type="button">Delete</button>
+        <button id="entry-close" class="primary" type="button">Close</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

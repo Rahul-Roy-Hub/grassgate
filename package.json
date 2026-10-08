@@ -1,0 +1,14 @@
+{
+  "name": "grassgate",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Unlock your feeds by going outside. Open-weight AI on your phone, no server.",
+  "type": "module",
+  "scripts": {
+    "start": "npx --yes http-server@14.1.1 app -p 8080 -c-1",
+    "test": "node --test tests/*.test.js",
+    "build": "npm test && node scripts/build.mjs",
+    "preview": "npx --yes http-server@14.1.1 dist -p 4173 -c-1"
+  },
+  "license": "MIT"
+}

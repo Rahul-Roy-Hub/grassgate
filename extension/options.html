@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grass Gate options</title>
+  <link rel="stylesheet" href="page.css">
+</head>
+<body>
+  <main>
+    <h1>Grass Gate</h1>
+    <p id="lock-status" class="muted"></p>
+
+    <div class="card">
+      <h2>1. Pair your phone</h2>
+      <p class="muted small">Open this link on your phone, or type the code into the app's settings. The code is the shared secret your phone uses to make unlock codes. It never leaves your two devices.</p>
+      <div id="secret" class="pairing"></div>
+      <p class="small"><a id="pair-link" target="_blank" rel="noopener"></a></p>
+      <div class="row">
+        <button id="copy-link">Copy pairing link</button>
+        <button id="new-secret">Make a new code</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2. What gets locked</h2>
+      <label>Sites, one per line (subdomains included)
+        <textarea id="sites" spellcheck="false"></textarea>
+      </label>
+      <label>Minutes unlocked per quest
+        <input id="minutes" type="number" min="5" max="240" step="5">
+      </label>
+      <label>Grass Gate app URL (where you host the PWA)
+        <input id="app-url" type="url" spellcheck="false">
+      </label>
+      <div class="row">
+        <button id="save" class="primary">Save</button>
+        <button id="lock-now">Lock now</button>
+      </div>
+      <p id="saved" class="small ok"></p>
+    </div>
+  </main>
+  <script src="options.js" type="module"></script>
+</body>
+</html>

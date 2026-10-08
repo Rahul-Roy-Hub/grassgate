@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Grass Gate",
+  "version": "0.2.0",
+  "description": "Blocks your feeds until you go outside and finish a Grass Gate quest on your phone.",
+  "permissions": ["declarativeNetRequest", "storage", "alarms", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": { "default_title": "Grass Gate", "default_popup": "popup.html" },
+  "options_page": "options.html",
+  "web_accessible_resources": [
+    { "resources": ["blocked.html", "blocked.js", "scenery.js", "page.css"], "matches": ["<all_urls>"] }
+  ]
+}

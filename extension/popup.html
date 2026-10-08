@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Grass Gate</title>
+  <link rel="stylesheet" href="page.css">
+  <style>
+    body { width: 320px; }
+    main { gap: 12px; padding: 16px; }
+    .head { display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; }
+    .state { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 16px; background: var(--accent-soft); }
+    .state.open { background: var(--sun-soft); }
+    .state-icon { font-size: 1.6rem; }
+    .state strong { display: block; font-family: var(--font-display); font-size: 1.3rem; line-height: 1.2; }
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat { padding: 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); text-align: center; }
+    .stat b { display: block; font-family: var(--font-display); font-size: 1.3rem; }
+    .row button { flex: 1; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="head"><span class="logo">🌿 Grass Gate</span><span id="paired" class="small muted"></span></div>
+    <div id="state" class="state">
+      <span id="state-icon" class="state-icon" aria-hidden="true"></span>
+      <div><strong id="state-title"></strong><span id="state-sub" class="small muted"></span></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="blocked">0</b><span class="small muted">blocked today</span></div>
+      <div class="stat"><b id="unlocks">0</b><span class="small muted">quests cashed in</span></div>
+    </div>
+    <p id="pair-hint" class="small" hidden>Pair your phone so quests can unlock your sites. <a href="options.html" target="_blank">Set it up</a></p>
+    <div class="row">
+      <button id="lock" type="button" hidden>Lock now</button>
+      <button id="options" type="button">Options</button>
+    </div>
+  </main>
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

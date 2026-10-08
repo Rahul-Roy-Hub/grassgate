@@ -1,0 +1,13 @@
+{
+  "name": "Grass Gate",
+  "short_name": "Grass Gate",
+  "description": "Unlock your feeds by going outside. Open-weight AI, on your phone.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f1e8",
+  "theme_color": "#2f5d3a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
