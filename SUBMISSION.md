@@ -45,7 +45,9 @@ The app works on its own: quests, the on-device photo check, the journal, streak
 
 ## Code
 
-<!-- TODO: GitHub repo embed -->
+{% github Rahul-Roy-Hub/grassgate %}
+
+**Repo: [github.com/Rahul-Roy-Hub/grassgate](https://github.com/Rahul-Roy-Hub/grassgate)**
 
 The whole app is plain HTML, CSS and JavaScript: a PWA you can install, about 100 KB of app code, with no bundler and no backend. The extension is a Chrome Manifest V3 extension.
 
